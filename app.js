@@ -1,21 +1,42 @@
+//imports
 const express = require("express");
+const cors = require("cors");
+const morgan = require("morgan");
+const dotenv = require("dotenv");
 const connectDb = require("./database");
-const urlRoutes = require("./api/urls/urls.routes");
-const userRoutes = require("./api/users/users.routes");
 const notFoundHandler = require("./middlewares/notFoundHandler");
 const errorHandler = require("./middlewares/errorHandler");
+const urlRoutes = require("./api/urls/urls.routes");
+const userRoutes = require("./api/users/users.routes");
+const path = require("path");
+const passport = require("passport");
+const { localStrategy } = require("./middlewares/passport");
 
-const app = express();
+//init
+
+dotenv.config();
 connectDb();
+const app = express();
+const PORT = process.env.PORT;
 
+//middlewares
+app.use(cors());
+app.use(morgan("dev"));
 app.use(express.json());
-
-app.use("/urls", urlRoutes);
+app.use(passport.initialize());
+passport.use("local", localStrategy);
+//routes
+app.use("/api/urls", urlRoutes);
+app.use("/api/auth", userRoutes);
 app.use(userRoutes);
 
+//notFoundHAndler
 app.use(notFoundHandler);
+
+//errorHandler
 app.use(errorHandler);
 
-app.listen(8000, () => {
-  console.log("The application is running on localhost:8000");
+//starting
+app.listen(3000, () => {
+  console.log("The application is running on localhost: 3000");
 });

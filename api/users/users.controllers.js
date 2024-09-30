@@ -1,18 +1,51 @@
 const User = require("../../models/User");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const saltRounds = 10;
+const dotenv = require("dotenv");
 
-exports.signup = async (req, res) => {
+dotenv.config();
+const hashPassword = async (password) => {
   try {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    return hashedPassword;
+  } catch (error) {
+    console.log({ error: error });
+  }
+};
+
+const generateToken = (user) => {
+  const payload = {
+    id: user._id,
+    username: user.username,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expireIn: "1h",
+  });
+  return token;
+};
+
+exports.signup = async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    const securePass = await hashPassword(password);
+    req.body.password = securePass;
     const newUser = await User.create(req.body);
-    res.status(201).json(newUser);
+    const token = generateToken(newUser);
+    return res.status(201).json({ token: token });
   } catch (err) {
     next(err);
   }
 };
 
-exports.signin = async (req, res) => {
+exports.signin = async (req, res, next) => {
   try {
+    const token = generateToken(req.user);
+    return res.status(201).json({ token: token });
   } catch (err) {
-    res.status(500).json("Server Error");
+    // res.status(500).json("Server Error");
+    next(err);
   }
 };
 
