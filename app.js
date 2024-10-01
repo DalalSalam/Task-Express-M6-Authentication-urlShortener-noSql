@@ -10,7 +10,7 @@ const urlRoutes = require("./api/urls/urls.routes");
 const userRoutes = require("./api/users/users.routes");
 const path = require("path");
 const passport = require("passport");
-const { localStrategy } = require("./middlewares/passport");
+const { localStrategy, JwtStrategy } = require("./middlewares/passport");
 
 //init
 
@@ -25,6 +25,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(passport.initialize());
 passport.use("local", localStrategy);
+passport.use("jwt", JwtStrategy);
 //routes
 app.use("/api/urls", urlRoutes);
 app.use("/api/auth", userRoutes);

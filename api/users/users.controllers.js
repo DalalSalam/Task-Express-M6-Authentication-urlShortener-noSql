@@ -21,7 +21,7 @@ const generateToken = (user) => {
   };
 
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expireIn: "1h",
+    expiresIn: "1h",
   });
   return token;
 };
@@ -56,4 +56,10 @@ exports.getUsers = async (req, res) => {
   } catch (err) {
     next(err);
   }
+};
+
+const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+  } catch (error) {}
 };
