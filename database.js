@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   const conn = await mongoose.connect(
-    "mongodb+srv://amnaalrashid:2Moonq8_24@fullstack.t5trz.mongodb.net/"
+    "mongodb+srv://dalaly2005:tKg4ZizAJcPDkGZK@fullstack.qkln8.mongodb.net/"
   );
   console.log(`mongo connected: ${conn.connection.host}`);
 };
